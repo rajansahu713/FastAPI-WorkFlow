@@ -1,40 +1,46 @@
-# import pytest
-# from httpx import AsyncClient
-# from main import app
+from fastapi.testclient import TestClient
+from sqlalchemy import StaticPool, create_engine
+from sqlalchemy.orm import sessionmaker
+from database import Base, get_db
+from main import app
 
-# @pytest.mark.asyncio
-# async def test_create_blog():
-#     async with AsyncClient(app=app, base_url="http://test") as client:
-#         response = await client.post("/blogs/", json={"title": "My First Blog", "content": "This is a test blog."})
-#     assert response.status_code == 200
-#     assert response.json()["title"] == "My First Blog"
+client = TestClient(app)
 
-# @pytest.mark.asyncio
-# async def test_get_blog():
-#     async with AsyncClient(app=app, base_url="http://test") as client:
-#         response = await client.post("/blogs/", json={"title": "Second Blog", "content": "Another blog content."})
-#         blog_id = response.json()["id"]
+DATABASE_URL = "sqlite:///:memory:"
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base.metadata.create_all(bind=engine)
 
-#         response = await client.get(f"/blogs/{blog_id}")
-#     assert response.status_code == 200
-#     assert response.json()["title"] == "Second Blog"
 
-# @pytest.mark.asyncio
-# async def test_update_blog():
-#     async with AsyncClient(app=app, base_url="http://test") as client:
-#         response = await client.post("/blogs/", json={"title": "Update Blog", "content": "Old content"})
-#         blog_id = response.json()["id"]
+def override_get_db():
+    database = TestingSessionLocal()
+    try:
+        yield database
+    finally:
+        database.close()
 
-#         response = await client.put(f"/blogs/{blog_id}", json={"title": "Updated Blog", "content": "New content"})
-#     assert response.status_code == 200
-#     assert response.json()["title"] == "Updated Blog"
 
-# @pytest.mark.asyncio
-# async def test_delete_blog():
-#     async with AsyncClient(app=app, base_url="http://test") as client:
-#         response = await client.post("/blogs/", json={"title": "To Delete", "content": "Content to be deleted"})
-#         blog_id = response.json()["id"]
+app.dependency_overrides[get_db] = override_get_db
 
-#         response = await client.delete(f"/blogs/{blog_id}")
-#     assert response.status_code == 200
-#     assert response.json()["message"] == "Blog deleted successfully"
+
+def test_create_blog(test_data):
+    test_blog = {"title": "string", "description": "string"}
+    response = client.post(
+        "/blogs", json=test_blog
+    )
+    assert response.status_code == 200
+    assert response.json()["message"] == "Blog created successfully"
+
+
+def test_get_blog(test_data):
+    response = client.get("/blogs/")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+def teardown_module(module):
+    Base.metadata.drop_all(bind=engine)
