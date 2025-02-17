@@ -1,5 +1,3 @@
-# This workflow will install Python dependencies, set up PostgreSQL, run tests, and lint with a single version of Python
-
 name: FastAPI application
 
 on:
@@ -32,11 +30,11 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgres://${{ secrets.DBUSER }}:${{ secrets.DBPASSWORD }}@localhost:DBPORT/${{ secrets.DBNAME }}
+      DATABASE_URL: postgres://${{ secrets.DBUSER }}:${{ secrets.DBPASSWORD }}@localhost:5432/${{ secrets.DBNAME }}
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.111
+    - name: Set up Python 3.11
       uses: actions/setup-python@v3
       with:
         python-version: "3.11"
