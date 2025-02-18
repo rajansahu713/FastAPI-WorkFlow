@@ -1,16 +1,19 @@
 from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from contextlib import asynccontextmanager
 from database import engine, Base, get_db
 from schemas import BlogCreate, BlogResponse
 from crud import create_blog, get_blog, update_blog, delete_blog
 
-app = FastAPI()
-
-# Initialize database
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    yield
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
+app = FastAPI(lifespan=lifespan)
 
 @app.post("/blogs/", response_model=BlogResponse)
 async def create_blog_api(blog: BlogCreate, db: AsyncSession = Depends(get_db)):

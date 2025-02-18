@@ -27,3 +27,8 @@ class Base(DeclarativeBase):
 async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
+
+# Add this function to override the database dependency in tests
+async def override_get_db():
+    async with AsyncSessionLocal() as session:
+        yield session
