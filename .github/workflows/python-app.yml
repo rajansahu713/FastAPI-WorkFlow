@@ -20,12 +20,19 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Set environment variables
+    - name: Print environment variables
       run: |
-        echo "DBHOST=${{ secrets.DBHOST }}" >> $GITHUB_ENV
-        echo "DBNAME=${{ secrets.DBNAME }}" >> $GITHUB_ENV
-        echo "DBPASSWORD=${{ secrets.DBPASSWORD }}" >> $GITHUB_ENV
-        echo "DBPORT=${{ secrets.DBPORT }}" >> $GITHUB_ENV
-        echo "DBUSER=${{ secrets.DBUSER }}" >> $GITHUB_ENV
+        echo "DBHOST=${DBHOST}"
+        echo "DBNAME=${DBNAME}"
+        echo "DBPASSWORD=${DBPASSWORD}"
+        echo "DBPORT=${DBPORT}"
+        echo "DBUSER=${DBUSER}"
+      shell: /usr/bin/bash -e {0}
+      env:
+        DBHOST: ${{ secrets.DBHOST }}
+        DBNAME: ${{ secrets.DBNAME }}
+        DBPASSWORD: ${{ secrets.DBPASSWORD }}
+        DBPORT: ${{ secrets.DBPORT }}
+        DBUSER: ${{ secrets.DBUSER }}
     - name: Run tests
       run: pytest
