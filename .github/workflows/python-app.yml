@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  DBNAME: 'mydb'
+  DBHOST: 'localhost'
+  DBPORT: '5432'
+  DBUSER: 'postgres'
+  DBPASSWORD: 'sahu'
+
 jobs:
   build:
     runs-on: ubuntu-latest
