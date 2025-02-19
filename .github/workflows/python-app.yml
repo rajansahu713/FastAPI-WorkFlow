@@ -6,12 +6,7 @@ on:
 permissions:
   contents: read
 
-env:
-  DBNAME: 'mydb'
-  DBHOST: 'localhost'
-  DBPORT: '5432'
-  DBUSER: 'postgres'
-  DBPASSWORD: 'sahu'
+
 
 jobs:
   build:
@@ -21,9 +16,11 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: sahu
-          POSTGRES_DB: mydb
+          DBNAME: 'mydb'
+          DBHOST: 'localhost'
+          DBPORT: '5432'
+          DBUSER: 'postgres'
+          DBPASSWORD: 'sahu'
         ports:
           - 5432:5432
         options: >-
