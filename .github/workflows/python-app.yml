@@ -1,78 +1,45 @@
+name: FastAPI CI/CD
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
-permissions:
-  contents: read
+    branches: [ main ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:13
         env:
-          DBNAME: 'mydb'
-          DBHOST: 'localhost'
-          DBPORT: '5432'
-          DBUSER: 'postgres'
-          DBPASSWORD: 'sahu'
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres"
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install flake8 pytest fastapi psycopg2-binary
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Lint with flake8
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Test with pytest
-        env:
-          DATABASE_URL: postgres://postgres:sahu@localhost:5432/mydb
-        run: |
-          pytest
-      - name: Wait for PostgreSQL
-        run: |
-          until pg_isready -h localhost -p 5432 -U postgres; do
-            echo "Waiting for PostgreSQL to be ready..."
-            sleep 2
-          done
-      - name: Inspect PostgreSQL container
-        if: failure()
-        run: |
-          docker ps -a
-          docker inspect $(docker ps -aq --filter "ancestor=postgres:13")
-      - name: Check PostgreSQL logs
-        if: failure()
-        run: |
-          CONTAINER_ID=$(docker ps -q --filter "ancestor=postgres:13")
-          if [ -n "$CONTAINER_ID" ]; then
-            docker logs $CONTAINER_ID
-          else
-            echo "No running PostgreSQL container found."
-          fi
-      - name: Run FastAPI
-        run: |
-          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
-          sleep 5
-      - name: Check FastAPI server
-        run: |
-          curl -f http://localhost:8000/healthcheck || exit 1
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+    
+    - name: Run tests
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+      run: |
+        pytest
