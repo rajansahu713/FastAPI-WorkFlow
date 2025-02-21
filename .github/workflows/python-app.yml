@@ -42,7 +42,7 @@ jobs:
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
       run: |
-        nohup uvicorn main:app --host 0.0.0.0 --port 8000 &
+        nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 &
         sleep 5
     - name: Check FastAPI server
       env:
