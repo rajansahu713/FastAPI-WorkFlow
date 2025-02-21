@@ -55,6 +55,11 @@ jobs:
             echo "Waiting for PostgreSQL to be ready..."
             sleep 2
           done
+      - name: Inspect PostgreSQL container
+        if: failure()
+        run: |
+          docker ps -a
+          docker inspect $(docker ps -aq --filter "ancestor=postgres:13")
       - name: Check PostgreSQL logs
         if: failure()
         run: |
