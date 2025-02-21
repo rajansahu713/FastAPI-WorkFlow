@@ -55,6 +55,10 @@ jobs:
             echo "Waiting for PostgreSQL to be ready..."
             sleep 2
           done
+      - name: Check PostgreSQL logs
+        if: failure()
+        run: |
+          docker logs $(docker ps -q --filter "ancestor=postgres:13")
       - name: Run FastAPI
         run: |
           uvicorn app.main:app --host 0.0.0.0 --port 8000 &
