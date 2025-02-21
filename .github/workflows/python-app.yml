@@ -58,7 +58,12 @@ jobs:
       - name: Check PostgreSQL logs
         if: failure()
         run: |
-          docker logs $(docker ps -q --filter "ancestor=postgres:13")
+          CONTAINER_ID=$(docker ps -q --filter "ancestor=postgres:13")
+          if [ -n "$CONTAINER_ID" ]; then
+            docker logs $CONTAINER_ID
+          else
+            echo "No running PostgreSQL container found."
+          fi
       - name: Run FastAPI
         run: |
           uvicorn app.main:app --host 0.0.0.0 --port 8000 &
