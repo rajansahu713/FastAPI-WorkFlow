@@ -11,7 +11,9 @@ dbname = os.environ.get('DBNAME')
 user = os.environ.get('DBUSER')
 password = os.environ.get('DBPASSWORD')
 
-DATABASE_URL = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{dbname}"
+# DATABASE_URL = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{dbname}"
+
+DATABASE_URL = f"postgresql+asyncpg://postgres:sahu@localhost:5432/mydb"
 
 # Create async engine
 engine = create_async_engine(DATABASE_URL, echo=True)
