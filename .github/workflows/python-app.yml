@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  DATABASE_URL: postgresql://${{secrets.DBUSER}}:${{secrets.DBPASSWORD}}@${{secrets.DBHOST}}:5432/${{secrets.DBNAME}}
+  DATABASE_URL: postgresql://${{secrets.DBUSER}}:${{secrets.DBPASSWORD}}@${{secrets.DBHOST}}:${{secret.DBPORT}}/${{secrets.DBNAME}}
   POSTGRES_USER: ${{secrets.DBUSER}}
   POSTGRES_PASSWORD: ${{secrets.DBPASSWORD}}
   POSTGRES_DB: ${{secrets.DBNAME}}
@@ -19,11 +19,11 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.DBUSER }}
+          POSTGRES_PASSWORD: ${{ secrets.DBPASSWORD }}
+          POSTGRES_DB: ${{ secrets.DBNAME }}
         ports:
-          - 5432:5432
+          - 5432:${{secret.DBPORT}}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
