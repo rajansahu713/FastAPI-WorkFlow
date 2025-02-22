@@ -52,6 +52,9 @@ jobs:
     - name: Health check
       run: |
         curl -f http://localhost:8000/docs || exit 1
+    - name: Print Secret
+      run: |
+        echo "Hello my name is ${{secrets.DBNAME}} what are looking for"
 
     - name: Run tests
       run: | 
