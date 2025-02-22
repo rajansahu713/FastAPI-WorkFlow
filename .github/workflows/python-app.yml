@@ -7,10 +7,10 @@ on:
     branches: [ main ]
 
 env:
-  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
-  POSTGRES_DB: test_db
+  DATABASE_URL: postgresql://${{secrets.DBUSER}}:${{secrets.DBPASSWORD}}@${{secrets.DBHOST}}:5432/${{secrets.DBNAME}}
+  POSTGRES_USER: ${{secrets.DBUSER}}
+  POSTGRES_PASSWORD: ${{secrets.DBPASSWORD}}
+  POSTGRES_DB: ${{secrets.DBNAME}}
 
 jobs:
   test:
