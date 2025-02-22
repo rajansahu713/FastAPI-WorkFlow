@@ -11,7 +11,6 @@ This document outlines the workflow for developing and deploying a FastAPI appli
 6. [Testing](#testing)
 7. [Deployment](#deployment)
 8. [Contributing](#contributing)
-9. [License](#license)
 
 ## Introduction
 FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.7+ based on standard Python type hints.
@@ -74,6 +73,3 @@ For deployment, you can use various platforms like Docker, Heroku, or any cloud 
 
 ## Contributing
 Contributions are welcome! Please fork the repository and create a pull request with your changes.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
