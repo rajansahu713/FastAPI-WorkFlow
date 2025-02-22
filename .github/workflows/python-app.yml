@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  DATABASE_URL: postgresql://${{secrets.DBUSER}}:${{secrets.DBPASSWORD}}@${{secrets.DBHOST}}:${{secret.DBPORT}}/${{secrets.DBNAME}}
+  DATABASE_URL: postgresql://${{secrets.DBUSER}}:${{secrets.DBPASSWORD}}@${{secrets.DBHOST}}:${{secrets.DBPORT}}/${{secrets.DBNAME}}
   POSTGRES_USER: ${{secrets.DBUSER}}
   POSTGRES_PASSWORD: ${{secrets.DBPASSWORD}}
   POSTGRES_DB: ${{secrets.DBNAME}}
